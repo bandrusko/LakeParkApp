@@ -52,7 +52,7 @@ const CONFIG = {
   // The display name used in the header bar and the browser tab title
   // (see the "PARK NAME" step near the top of app.js).
   // ====================================================================
-  parkName: "Lakes Parks & Wetland Sanctuary Trail Explorer",
+  parkName: "Lakeside Wetlands Park App",
 
   // ====================================================================
   // ABOUT PANEL
@@ -62,7 +62,7 @@ const CONFIG = {
   // with localStorage so returning visitors aren't nagged again).
   // ====================================================================
   about: {
-    title: "Welcome to the Lakes Parks & Wetland Sanctuary Trail Explorer",
+    title: "Welcome to the Lakeside Wetlands Park App",
     body: "This interactive map helps you explore the park's trails, recreational activities, accommodations, and scenic landmarks. Use Search to find a feature by name, Filter to show only certain trail or facility types, the location button to see where you are in the park, and the report button to flag an issue you spot along the way.",
     showOnFirstVisit: true
   },
