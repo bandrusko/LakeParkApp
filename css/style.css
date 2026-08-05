@@ -1,3 +1,7 @@
+/** Defines the app's shared color palette and header height as CSS variables
+ *  so the brand colors, borders, and danger color stay consistent everywhere
+ *  they're referenced below.
+ */
 :root {
   --brand-green: #2e7d32;
   --brand-green-dark: #1b5e20;
@@ -10,14 +14,24 @@
   --header-height: 56px;
 }
 
+/** Switches every element to border-box sizing so padding/border are
+ *  included in an element's declared width/height instead of adding to it.
+ */
 * { box-sizing: border-box; }
 
+/** Fills the whole browser window with no default margin/padding and sets
+ *  the app's base font family and text color.
+ */
 html, body {
   height: 100%; margin: 0; padding: 0;
   font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   color: var(--text-dark);
 }
 
+/** Styles the fixed top header bar: dark green background, white text,
+ *  the park name centered between the menu and report icon buttons, and
+ *  a drop shadow so it reads as sitting above the map.
+ */
 #appHeader {
   height: var(--header-height);
   background: var(--brand-green-dark);
@@ -27,14 +41,25 @@ html, body {
   box-shadow: 0 2px 4px rgba(0,0,0,0.25);
 }
 #appHeader h1 { font-size: 1.05rem; margin: 0; text-align: center; flex: 1; }
+/** Styles the plain icon buttons used throughout the header and floating
+ *  buttons (hamburger menu, report, about, locate) - transparent background,
+ *  white icon glyph, and a slight fade on hover.
+ */
 .icon-btn { background: transparent; border: none; color: #fff; font-size: 1.4rem; padding: 6px 10px; cursor: pointer; line-height: 1; }
 .icon-btn:hover { opacity: 0.8; }
 
+/** Lays out the area below the header as a side-by-side flex row: the
+ *  side panel on the left and the map filling the remaining space.
+ */
 #appBody { position: relative; height: calc(100% - var(--header-height)); display: flex; }
 #mapContainer { position: relative; flex: 1; height: 100%; }
 #mapDiv { width: 100%; height: 100%; }
 .leaflet-container { z-index: 1; }
 
+/** Styles the collapsible side panel (Search/Filter/Layers) as an
+ *  off-canvas drawer on mobile - it slides in from the left over the map
+ *  and can be toggled with the hamburger button.
+ */
 #sidePanel {
   position: absolute; top: 0; left: 0; width: 85%; max-width: 320px; height: 100%;
   background: var(--panel-bg); z-index: 15; overflow-y: auto;
@@ -45,26 +70,102 @@ html, body {
 #sidePanel.open { transform: translateX(0); }
 #sidePanel.hidden { transform: translateX(-100%); }
 
+/** On wider screens, docks the side panel permanently on the left as a
+ *  fixed-width column with a border instead of a sliding drawer, so
+ *  desktop users always see it alongside the map.
+ */
 @media (min-width: 900px) {
   #sidePanel { position: relative; transform: none; width: 320px; max-width: none; box-shadow: none; border-right: 1px solid var(--border-color); }
   #sidePanel.hidden { display: none; }
 }
 
+/** Styles each collapsible group inside the side panel (Search, Filter,
+ *  Layers) with consistent padding, a bottom rule, and a small uppercase
+ *  section heading.
+ */
 .panel-section { padding: 14px 16px; border-bottom: 1px solid var(--border-color); }
 .panel-section h2 { font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.03em; color: var(--brand-green-dark); margin: 0 0 8px 0; }
 .panel-hint { font-size: 0.8rem; color: var(--text-muted); margin: 0 0 8px 0; }
 #sidePanel label { display: block; font-size: 0.8rem; font-weight: 600; margin-top: 8px; margin-bottom: 3px; }
 #sidePanel select { width: 100%; padding: 8px; border: 1px solid var(--border-color); border-radius: 4px; font-size: 0.9rem; }
+/** Styles each layer-visibility checkbox row in the Layers panel, with its
+ *  color swatch dot lined up next to the checkbox and label.
+ */
 #layerToggleList label { display: flex; align-items: center; gap: 8px; font-weight: 400; margin-top: 6px; }
 .layer-swatch { display: inline-block; width: 12px; height: 12px; border-radius: 50%; border: 1px solid rgba(0,0,0,0.25); flex-shrink: 0; }
 
-.popup-card { font-size: 0.85rem; max-width: 240px; }
+/** Styles the popup bubble's outer card. max-width here is a ceiling, not
+ *  a fixed size - the popup itself still shrinks to fit short content (see
+ *  L.popup({ maxWidth: ... }) in app.js). word-break/overflow-wrap only
+ *  kick in for a genuinely unbreakable string (a long word, URL, etc. with
+ *  no spaces) so it can't stretch the bubble past its edge - normal
+ *  sentences still wrap word-by-word, left to right, like regular text.
+ */
+.popup-card { font-size: 0.85rem; max-width: 280px; overflow-wrap: break-word; }
 .popup-layer-tag { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.03em; color: var(--text-muted); margin-bottom: 2px; }
-.popup-card h3 { margin: 0 0 6px 0; font-size: 0.95rem; color: var(--brand-green-dark); }
-.popup-table { width: 100%; border-collapse: collapse; }
-.popup-table th, .popup-table td { text-align: left; padding: 3px 6px 3px 0; vertical-align: top; border-bottom: 1px solid var(--border-color); font-size: 0.8rem; }
-.popup-table th { color: var(--text-muted); font-weight: 600; white-space: nowrap; }
+.popup-card h3 { margin: 0 0 6px 0; font-size: 0.95rem; color: var(--brand-green-dark); overflow-wrap: break-word; }
 
+/** Styles each popup attribute row as a normal flowing line ("Label: value")
+ *  rather than a two-column table. A fixed-width label column was forcing
+ *  longer words to wrap letter-by-letter inside a narrow ~40%-wide cell,
+ *  which is what made the popup text look "stacked" instead of readable
+ *  left to right - this reads and wraps like an ordinary sentence instead.
+ */
+.popup-fields { margin-top: 2px; }
+.popup-field { font-size: 0.82rem; line-height: 1.5; margin-bottom: 6px; overflow-wrap: break-word; }
+.popup-field:last-child { margin-bottom: 0; }
+.popup-field-label { font-weight: 600; color: var(--text-muted); }
+.popup-field-value { color: var(--text-dark); }
+
+/* ==========================================================
+   REPORT PHOTO ATTACHMENTS
+   Thumbnails for any Survey123 photo attachments on a report,
+   fetched live from AGOL and appended to the popup once loaded.
+   Tap/click a thumbnail to open the full-size photo in a new tab.
+   ========================================================== */
+/** Styles the small italic "Loading photos…" placeholder shown in a
+ *  report popup while its attachments are being fetched from AGOL.
+ */
+.popup-photos-loading {
+  margin: 6px 0 8px 0;
+  font-size: 0.75rem;
+  font-style: italic;
+  color: var(--text-muted);
+}
+/** Lays out the fetched attachment thumbnails as a wrapping row of
+ *  square tiles underneath the popup title.
+ */
+.popup-photos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 6px 0 10px 0;
+}
+.popup-photos a {
+  display: block;
+  width: 64px;
+  height: 64px;
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+  flex-shrink: 0;
+}
+.popup-photos img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/** Styles the "Directions from my location" button shown in popups for
+ *  layers flagged routable: true (Recreation, Accommodations, Landmarks).
+ */
+.get-directions-btn { margin-top: 10px; }
+
+/** Styles the shared button classes used throughout the app: a flex row
+ *  of primary/secondary buttons, plus a full-width variant for forms and
+ *  modals.
+ */
 .button-row { display: flex; gap: 8px; margin-top: 10px; }
 .btn { padding: 9px 14px; border-radius: 4px; border: none; font-size: 0.85rem; cursor: pointer; flex: 1; }
 .btn.primary { background: var(--brand-green); color: #fff; }
@@ -73,6 +174,10 @@ html, body {
 .btn.secondary:hover { background: #e2e2e2; }
 .btn.full-width { width: 100%; margin-top: 12px; }
 
+/** Styles the circular floating action buttons that sit on top of the map
+ *  (locate + about), including the pulsing animation shown while a
+ *  location fix is being acquired.
+ */
 .floating-btn {
   position: absolute; bottom: 24px; right: 16px; width: 48px; height: 48px; border-radius: 50%;
   background: #fff; border: 1px solid var(--border-color); box-shadow: 0 2px 6px rgba(0,0,0,0.3);
@@ -80,9 +185,10 @@ html, body {
 }
 .floating-btn:hover { background: #f5f5f5; }
 .floating-btn.locating { animation: pulse 1s infinite; }
-/* Active/continuous tracking state (request #4): the locate button
-   itself turns blue to make it obvious tracking is currently on and
-   that tapping it again will stop it. */
+/** Styles the active/continuous tracking state (request #4): the locate
+ *  button itself turns blue to make it obvious tracking is currently on
+ *  and that tapping it again will stop it.
+ */
 .floating-btn.tracking { background: var(--brand-blue); color: #fff; border-color: var(--brand-blue); }
 @keyframes pulse {
   0% { box-shadow: 0 0 0 0 rgba(46,125,50,0.5); }
@@ -90,6 +196,23 @@ html, body {
   100% { box-shadow: 0 0 0 0 rgba(46,125,50,0); }
 }
 
+/** Positions the "About this map" (i) button just above the locate button
+ *  so both float in the same bottom-right stack without overlapping, and
+ *  styles its glyph as an italic serif "i".
+ */
+.floating-btn.about-btn {
+  bottom: 84px;
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--brand-blue);
+  font-family: Georgia, "Times New Roman", serif;
+  font-style: italic;
+}
+
+/** Styles the dismissible banner shown across the top of the map when
+ *  Leaflet/esri-leaflet fail to load, including its bullet-list of
+ *  troubleshooting steps.
+ */
 .load-error {
   position: absolute; top: 12px; left: 12px; right: 12px; z-index: 25;
   background: #fff3f3; border: 1px solid var(--danger); color: var(--text-dark);
@@ -99,6 +222,10 @@ html, body {
 .load-error ul { margin: 8px 0 0 18px; padding: 0; }
 .load-error.hidden { display: none; }
 
+/** Styles the shared modal overlay/card used by both the About modal and
+ *  the Report an Issue modal - a dimmed backdrop with a card that slides
+ *  up from the bottom on mobile and centers on wider screens.
+ */
 .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: flex-end; justify-content: center; z-index: 30; }
 .modal.hidden { display: none; }
 .modal-content { background: #fff; width: 100%; max-width: 480px; max-height: 90vh; overflow-y: auto; border-radius: 12px 12px 0 0; padding: 20px; position: relative; }
@@ -108,15 +235,36 @@ html, body {
 }
 .close-btn { position: absolute; top: 8px; right: 8px; color: var(--text-dark); }
 
+/** Styles the About modal body copy - a touch larger/roomier than the
+ *  generic .panel-hint styling it's based on, since it's the main content
+ *  of the modal rather than a small caption under a heading.
+ */
+.about-body {
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: var(--text-dark);
+  margin-top: 4px;
+}
+
+/** Styles the Report an Issue form's labels and inputs so every field
+ *  type (text, select, textarea) shares the same spacing and border.
+ */
 #reportForm label { display: block; font-size: 0.85rem; font-weight: 600; margin-top: 12px; margin-bottom: 4px; }
 #reportForm input, #reportForm select, #reportForm textarea { width: 100%; padding: 9px; border: 1px solid var(--border-color); border-radius: 4px; font-size: 0.9rem; font-family: inherit; }
 
+/** Styles the location-capture status line and the submit-result message
+ *  in the Report an Issue form, switching color once a location has been
+ *  captured or once a submission succeeds/fails.
+ */
 .location-status { margin-top: 12px; font-size: 0.85rem; color: var(--text-muted); }
 .location-status.captured { color: var(--brand-green-dark); font-weight: 600; }
 .form-message { margin-top: 10px; font-size: 0.85rem; }
 .form-message.error { color: var(--danger); }
 .form-message.success { color: var(--brand-green-dark); }
 
+/** Styles the Search box row and its results list in the side panel,
+ *  including the small uppercase layer-name tag shown above each result.
+ */
 .search-row { display: flex; gap: 6px; }
 .search-row input { flex: 1; padding: 8px; border: 1px solid var(--border-color); border-radius: 4px; font-size: 0.9rem; }
 .search-row .btn { flex: 0 0 auto; }
@@ -133,6 +281,10 @@ html, body {
    geometry (the whole trail line, or a ring around a point),
    instead of a plain static circle dropped at its center.
    ========================================================== */
+/** Animates a search-selected trail/line's dashed outline so it appears
+ *  to march continuously along the path, making the highlighted feature
+ *  easy to spot against the basemap.
+ */
 .search-highlight-line {
   animation: marching-ants 0.6s linear infinite;
 }
@@ -140,6 +292,9 @@ html, body {
   to { stroke-dashoffset: -18; }
 }
 
+/** Animates a search-selected point feature's ring so it pulses outward
+ *  and fades, drawing the eye to the exact marker that was found.
+ */
 .search-highlight-point {
   animation: highlight-ring-pulse 1.2s ease-out infinite;
   transform-origin: center;
@@ -150,8 +305,10 @@ html, body {
   100% { stroke-width: 4; opacity: 1; }
 }
 
-/* Permanent "Start" / "End" labels dropped at a non-loop trail's
-   endpoints when it's selected from search results. */
+/** Styles the permanent "Start" / "End" labels dropped at a non-loop
+ *  trail's endpoints when it's selected from search results - a small
+ *  dark pill with no default Leaflet tooltip arrow/border.
+ */
 .endpoint-tooltip {
   background: rgba(33,33,33,0.85);
   color: #fff;
@@ -168,11 +325,15 @@ html, body {
    A Google-Maps-style dot with an outward pulsing ring,
    continuously repositioned while tracking is on.
    ========================================================== */
+/** Sizes the container for the live location marker so its dot and
+ *  pulsing ring share the same centered coordinate space.
+ */
 .user-location-blip {
   position: relative;
   width: 22px;
   height: 22px;
 }
+/** Styles the solid center dot of the "you are here" blip. */
 .user-location-blip .blip-dot {
   position: absolute;
   top: 50%; left: 50%;
@@ -184,6 +345,9 @@ html, body {
   box-shadow: 0 1px 4px rgba(0,0,0,0.4);
   z-index: 2;
 }
+/** Animates the translucent ring around the blip so it continuously
+ *  expands outward and fades, mimicking a live GPS pulse.
+ */
 .user-location-blip .blip-pulse {
   position: absolute;
   top: 50%; left: 50%;
@@ -198,3 +362,43 @@ html, body {
   0% { transform: scale(0.6); opacity: 0.8; }
   100% { transform: scale(2.6); opacity: 0; }
 }
+
+/* ==========================================================
+   ROUTE INFO PANEL (walking directions)
+   Small banner shown across the top of the map while a route is
+   drawn, with the destination name, distance, estimated walk time,
+   and a way to dismiss/clear the route.
+   ========================================================== */
+/** Styles the banner shown across the top of the map while a walking
+ *  route is drawn, holding the destination label, distance/time text,
+ *  and the close button that clears the route.
+ */
+#routeInfoPanel {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  right: 12px;
+  z-index: 22;
+  background: #ffffff;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 10px 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.route-info-text { display: flex; flex-direction: column; gap: 2px; font-size: 0.85rem; }
+.route-info-text strong { color: var(--brand-green-dark); }
+.route-info-text span { color: var(--text-muted); font-size: 0.8rem; }
+.route-info-close {
+  background: transparent;
+  border: none;
+  font-size: 1rem;
+  cursor: pointer;
+  color: var(--text-muted);
+  padding: 4px;
+  flex-shrink: 0;
+}
+.route-info-close:hover { color: var(--text-dark); }

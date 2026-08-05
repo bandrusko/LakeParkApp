@@ -12,6 +12,9 @@
 </head>
 <body>
 
+  <!-- Fixed top header bar: hamburger menu toggle on the left, the park
+       name (filled in from CONFIG.parkName by app.js) centered, and the
+       report-an-issue button on the right. -->
   <header id="appHeader">
     <button id="menuToggle" class="icon-btn" aria-label="Toggle menu">&#9776;</button>
     <h1>Lakes Parks Trail Explorer</h1>
@@ -20,8 +23,15 @@
 
   <div id="appBody">
 
+    <!-- Collapsible side panel holding the app's three main controls:
+         Search, Filter, and the Layers visibility list. Slides in as an
+         off-canvas drawer on mobile and docks permanently on wider
+         screens (see the #sidePanel media query in style.css). -->
     <aside id="sidePanel" class="hidden">
 
+      <!-- Search section: a text box + Go button that queries every
+           searchable layer in CONFIG.layers, with matches listed below
+           for the user to tap and highlight on the map. -->
       <div class="panel-section">
         <h2>Search</h2>
         <p class="panel-hint">Find a trail, landmark, accommodation, or activity by name.</p>
@@ -32,6 +42,10 @@
         <ul id="searchResults" class="search-results"></ul>
       </div>
 
+      <!-- Filter section: pick a filterable layer, then a value that
+           actually exists in that layer's live AGOL data, and apply it
+           as a where-clause filter on the map (see setupFilterPanel in
+           app.js). -->
       <div class="panel-section">
         <h2>Filter</h2>
         <label for="filterLayerSelect">Layer</label>
@@ -48,12 +62,18 @@
         </div>
       </div>
 
+      <!-- Layers section: populated at runtime by app.js with one
+           checkbox + color swatch per configured layer, letting the user
+           toggle each layer's visibility on the map independently. -->
       <div class="panel-section">
         <h2>Layers</h2>
         <div id="layerToggleList"></div>
       </div>
     </aside>
 
+    <!-- Main map area: the Leaflet map itself, plus the floating About
+         and Locate buttons and the hidden load-error banner that appears
+         if Leaflet/esri-leaflet fail to load from the CDN. -->
     <main id="mapContainer">
       <div id="loadError" class="load-error hidden">
         <strong>The map couldn't start.</strong>
@@ -66,10 +86,29 @@
         </ul>
       </div>
       <div id="mapDiv"></div>
+      <button id="aboutBtn" class="floating-btn about-btn" aria-label="About this map" title="About this map">&#8505;</button>
       <button id="locateBtn" class="floating-btn" aria-label="Find my location" title="Find my location">&#128205;</button>
     </main>
   </div>
 
+  <!-- About modal: explains what the app does. Its title/body are filled
+       in from CONFIG.about by setupAboutModal() in app.js, and it opens
+       automatically on a visitor's first load if CONFIG.about.showOnFirstVisit
+       is true. -->
+  <div id="aboutModal" class="modal hidden">
+    <div class="modal-content">
+      <button id="closeAboutModal" class="icon-btn close-btn" aria-label="Close">&#10005;</button>
+      <h2 id="aboutTitle">About This Map</h2>
+      <p id="aboutBody" class="panel-hint about-body"></p>
+      <button type="button" id="aboutDismissBtn" class="btn primary full-width">Got it</button>
+    </div>
+  </div>
+
+  <!-- Report an Issue modal: the app's built-in submission form, used
+       when CONFIG.useHostedReportLayer is true. Collects a name, email,
+       issue type, description, and an optional captured GPS location,
+       then submits the new point directly to the reports feature layer
+       via setupReportForm() in app.js. -->
   <div id="reportModal" class="modal hidden">
     <div class="modal-content">
       <button id="closeReportModal" class="icon-btn close-btn" aria-label="Close">&#10005;</button>
@@ -106,6 +145,9 @@
     </div>
   </div>
 
+  <!-- Leaflet, esri-leaflet, and the esri-leaflet basemap plugin, loaded
+       from the jsDelivr CDN, followed by this app's own configuration
+       and logic files. -->
   <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/esri-leaflet@3.0.12/dist/esri-leaflet.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/esri-leaflet-basemaps@2.0.5/dist/esri-leaflet-basemaps.js"></script>
